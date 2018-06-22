@@ -1,0 +1,47 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import promise from 'redux-promise';
+
+/* the Route object is the workhorse. Its purpose is to provide the configuration
+or customization to react-router , and remember that this application started
+with <App /> being rendered but since we added react-router we no-longer
+need that and just use the BrowserRouter as the wrapper */
+// import App from './components/app';
+import reducers from './reducers';
+import PostsIndex from './components/posts_index';
+import PostsNew from './components/posts_new';
+import PostsShow from './components/posts_show';
+
+const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
+
+/* The 2 important and required properties that Route gets are [path and component]
+   path will almost always be a string
+*/
+ReactDOM.render(
+  <Provider store={createStoreWithMiddleware(reducers)}>
+	<BrowserRouter>
+	  <div>
+		<Switch>
+		  <Route path="/posts/new" component={PostsNew} />
+		  <Route path="/posts/:id" component={PostsShow} />
+		  <Route path="/" component={PostsIndex} />
+		</Switch>
+	  </div>
+	</BrowserRouter>
+  </Provider>
+	, document.querySelector('.container'));
+// * Note, the name of the component does not have to match the path
+
+/* *!*!*!* Note the /posts/new route? Upon first render there was a bug to be aware of
+   with react-router. We show both the PostsIndex  & PostsNew components at the same time?
+   And I will almost inevitably run into this again. PROBLEM: something wrong with the
+   PostsIndex compnent. Because the PostsIndex has a "/" react-router losely matches
+   that route to be rendered. SOLUTION: Use another component coming out of react-router
+   called the Switch Component. <Switch /> will look at all the routes and only render the
+   first route that matches the url. So we put our most specific routes at the top, in
+   this case we want /posts/new at the top. *This is different in the API for
+   react-router v2 or v3.
+*/

@@ -1,0 +1,4 @@
+/* Notice that this rule is for the <Link /> tag which gets rendered as an anchor<a></a> tag in React */
+form a {
+    margin-left: 5px;
+}
